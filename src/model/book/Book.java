@@ -1,4 +1,8 @@
-package model;
+package model.book;
+
+import model.book.enums.Status;
+import model.person.Author;
+import model.person.Person;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -10,7 +14,7 @@ public class Book {
     private String name;
     private int price;
     private Status status;
-    private String edition;
+    private Person owner;
     private LocalDate dateOfPurchase;
 
     public Book( String name, Author author,  int price){
@@ -37,6 +41,7 @@ public class Book {
 
     public void display(){
         System.out.println( "Book id :" + bookId
+                + " | Book Name: " +getName()
         + " | Author: " +getAuthor()
         + " | Price: " + getPrice()
         + " | Date of Purchase " + getDateOfPurchase());
@@ -62,18 +67,28 @@ public class Book {
     public Status getStatus() {
         return status;
     }
-    public void setStatus(Status newStatus){
-        if(newStatus == null ){
-            throw new IllegalArgumentException("Please enter valid status");
+    public void setStatus(Status newStatus) {
+        try {
+            if (newStatus == null) {
+                throw new IllegalArgumentException("Please enter valid status");
+            }
+            if (status == newStatus) {
+                throw new IllegalArgumentException("Status is same!");
+            }
+            this.status = newStatus;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Hata: " + e.getMessage());
         }
-        if(status == newStatus){
-            throw new IllegalArgumentException("Status is same!");
-        }
-        this.status = newStatus;
+
+
     }
 
-    public String getEdition() {
-        return edition;
+    public Person getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Person owner) {
+        this.owner = owner;
     }
 
     public LocalDate getDateOfPurchase() {
@@ -87,9 +102,9 @@ public class Book {
                 ", author=" + author +
                 ", name='" + name + '\'' +
                 ", price=" + price +
-                ", status='" + status + '\'' +
-                ", edition='" + edition + '\'' +
-                ", dateOfPurchase='" + dateOfPurchase + '\'' +
+                ", status=" + status +
+                ", owner=" + owner +
+                ", dateOfPurchase=" + dateOfPurchase +
                 '}';
     }
 }

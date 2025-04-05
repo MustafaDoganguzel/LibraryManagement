@@ -1,9 +1,11 @@
-package model;
+package model.person;
+
+import model.book.Book;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class Author extends Person{
+public class Author extends Person {
 
     private Set<Book> books = new HashSet<>();
 //    private Map<Book, String> books = new HashMap<>();

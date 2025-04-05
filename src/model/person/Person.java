@@ -1,6 +1,6 @@
-package model;
+package model.person;
 
-public class Person {
+public abstract class Person {
     private String name;
 
     public Person(String name){
