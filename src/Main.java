@@ -1,145 +1,183 @@
+import model.Library;
 import model.book.Book;
+import model.book.Journals;
+import model.book.Magazines;
+import model.book.StudyBooks;
 import model.person.Author;
-import model.person.Person;
 import model.person.Reader;
 
-import java.util.*;
+import java.util.Scanner;
 
 public class Main {
 
-    static Map<String, String> userDatabase = new HashMap<>();
-    static Map<String, Person> userObjects = new HashMap<>();
+//    static Map<String, String> userDatabase = new HashMap<>();
+//    static Map<String, Person> userObjects = new HashMap<>();
+    private static Library library = Library.getInstance();
+    private static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
+        boolean working = true;
 
-        while (true) {
-            System.out.println("\n👉 1: Sisteme Kayıt Ol");
-            System.out.println("👉 2: Giriş Yap");
-            System.out.println("👉 0: Çıkış");
-            System.out.print("Seçiminiz: ");
+        while (working){
+            showMenu();
             String choice = sc.nextLine();
 
             switch (choice) {
                 case "1":
+                    library.showBook();
+                    break;
+                case "2":
+                    System.out.println("Eklemek Istediginiz kitabin adini ve Yazarinin adini yaziniz");
+                    String book = sc.nextLine();
+                    String[] promptBook = book.trim().toLowerCase().split(" ");
+                    Book promptedBook = new Book(promptBook[0], new Author(promptBook[1]));
+                    library.newBook(promptedBook);
+                    break;
+                case "3":
+                    System.out.println("Aradiginiz kitabin ismini belirtiniz");
+                    String bookName = sc.nextLine().trim().toLowerCase();
 
-                    System.out.print("Yeni kullanıcı adı girin: ");
-                    String newUsername = sc.nextLine().toLowerCase().trim();
-
-                    if (userDatabase.containsKey(newUsername)) {
-                        System.out.println("❗ Bu kullanıcı adı zaten kayıtlı.");
-                    } else {
-                        System.out.print("Şifre girin: ");
-                        String newPassword = sc.nextLine().trim();
-                        userDatabase.put(newUsername, newPassword);
-
-                        System.out.print("Title girin (reader/author): ");
-                        String title = sc.nextLine().trim();
-
-                        if (title.equalsIgnoreCase("reader")) {
-                            Reader reader = new Reader(newUsername);
-                            userObjects.put(newUsername, reader);
-                            System.out.println("✅ Kayıt başarılı. Reader olarak artık giriş yapabilirsiniz.");
-                        } else if (title.equalsIgnoreCase("author")) {
-                            Author author = new Author(newUsername);
-                            userObjects.put(newUsername, author);
-                            System.out.println("✅ Kayıt başarılı. Author olarak artık giriş yapabilirsiniz.");
-                        } else {
-                            System.out.println("❌ Geçersiz unvan.");
+                    boolean found = false;
+                    for (Book bn : library.getBooks()) {
+                        if (bn.getName().toLowerCase().contains(bookName)) {
+                            System.out.println("Bulunan kitap: " + bn.getName() + " - " + " Yazarin Adi: " + bn.getAuthor());
+                            found = true;
                         }
                     }
+                    if (!found) {
+                        System.out.println("Aradiginiz kitap bulunamadi.");
+                    }
                     break;
 
-                case "2":
-                    System.out.print("Kullanıcı adınız: ");
-                    String username = sc.nextLine().toLowerCase().trim();
+                case "4":
+                    System.out.println("Istenilen Kategoriyi giriniz");
+                    System.out.println("1- Magazines");
+                    System.out.println("2- Study Books");
+                    System.out.println("3- Journals");
+                    String category = sc.nextLine();
 
-                    System.out.print("Şifreniz: ");
-                    String password = sc.nextLine().trim();
+                    switch (category) {
+                        case "1":
+                            System.out.println("Magazines Kategorisindeki Kitaplar:");
+                            for (Book book2 : library.getBooks()) {
+                                if (book2 instanceof Magazines) {
+                                    System.out.println(book2.getName() + " - " + book2.getAuthor());
+                                }
+                            }
+                            break;
 
-                    if (userDatabase.containsKey(username) && userDatabase.get(username).equals(password)) {
-                        System.out.println("\n✅ Giriş başarılı. Hoş geldiniz, " + username + "!");
+                        case "2": // Study Books kategorisini listeleme
+                            System.out.println("Study Books Kategorisindeki Kitaplar:");
+                            for (Book book2 : library.getBooks()) {
+                                if (book2 instanceof StudyBooks) {
+                                    System.out.println(book2.getName() + " - " + book2.getAuthor());
+                                }
+                            }
+                            break;
 
-                        Person user = userObjects.get(username);
-                        showMenu(user, sc);
+                        case "3":
+                            System.out.println("Journals Kategorisindeki Kitaplar:");
+                            for (Book book2 : library.getBooks()) {
+                                if (book2 instanceof Journals) {
+                                    System.out.println(book2.getName() + " - " + book2.getAuthor());
+                                }
+                            }
+                            break;
+
+                        default:
+                            System.out.println("Gecersiz kategori.");
+                            break;
+                    } break;
+
+                case "5":
+                    System.out.println("Yazarin Ismini giriniz");
+                    String author = sc.nextLine();
+                    boolean found1 = false;
+                    for (Book b1: library.getBooks()){
+                        if (b1.getAuthor().getName().toLowerCase().contains(author)){
+                            System.out.println("Kitabinin ismi: " +b1.getName());
+                            found1 =true;
+                        }
+                    }
+                    if(!found1){
+                        System.out.println("Yazara ait kitap bulunamadi");
+                    } break;
+                case "6":
+                    System.out.println("Odunc alinacak kitabin adi ve yazarinin adi: ");
+                    String borrow = sc.nextLine().trim().toLowerCase();
+
+                    String[] bb = borrow.split(" ", 2);
+                    String bookname = bb[0];
+                    String authorName = bb[1];
+
+                    Book borrowedB = null;
+
+                    for (Book borrowBook : library.getBooks()) {
+                        if (borrowBook.getName().toLowerCase().equals(bookname) &&
+                                borrowBook.getAuthor().getName().toLowerCase().equals(authorName)) {
+                            borrowedB = borrowBook;
+                            break;
+                        }
+                    }
+                    if (borrowedB != null) {
+                        System.out.println("Kitabi alan kisinin adi: ");
+                        String person = sc.nextLine();
+                        Reader reader = new Reader(person);
+                        library.lendBook(borrowedB, reader);
                     } else {
-                        System.out.println("❌ Kullanıcı adı veya şifre hatalı.");
+                        System.out.println("Kitap bulunamadi.");
                     }
+                case "7":
+                    System.out.println("Odunc alinan kitabin adi ve yazarinin adi: ");
+                    String returnBookInput = sc.nextLine().trim().toLowerCase();
+
+                    String[] bbReturn = returnBookInput.split(" ", 2);
+                    String returnBookName = bbReturn[0];
+                    String returnAuthorName = bbReturn[1];
+
+                    Book returnedBook = null;
+
+                    for (Book book1 : library.getBooks()) {
+                        if (book1.getName().toLowerCase().equals(returnBookName) &&
+                                book1.getAuthor().getName().toLowerCase().equals(returnAuthorName)) {
+                            returnedBook = book1;
+                            break;
+                        }
+                    }
+
+                    if (returnedBook != null) {
+                        System.out.println("Kitabi geri veren kisinin adi: ");
+                        String personName = sc.nextLine();
+                        Reader returnReader = new Reader(personName);
+
+                        library.takeBack(returnedBook, returnReader);
+                    } else {
+                        System.out.println("Kitap bulunamadi.");
+                    } break;
+                case "0":
+                    System.out.println("Sistem kapatiliyor...");
+                    working =false;
                     break;
 
-                case "0":
-                    System.out.println("👋 Sistemden çıkılıyor...");
-                    return;
-
-                default:
-                    System.out.println("⚠️ Geçersiz seçim. Lütfen 1, 2 veya 0 girin.");
             }
+
         }
+
+    }
+    private static void showMenu(){
+        System.out.println("--------MENU----------");
+        System.out.println("1: Kutuphanedeki tum kitaplari listele");
+        System.out.println("2: Yeni kitap ekle");
+        System.out.println("3: Kitap ara - Isim");
+        System.out.println("4: Kategorideki tum kitaplari listele");
+        System.out.println("5: Yazarin Tum Kitaplarini Listele");
+        System.out.println("6: Kitap odunc al");
+        System.out.println("7: Odunc alinan kitabi geri ver");
+        System.out.println("0: Sistemden cikis yap");
+        System.out.print("Seçiminiz: ");
+
     }
 
-    public static void showMenu(Person user, Scanner sc) {
-
-        if (!(user instanceof Reader)) {
-            System.out.println("❗ Sadece Reader kullanıcılar bu menüyü görebilir.");
-            return;
-        }
-
-        Reader reader = (Reader) user;
-
-        System.out.println("\n------ MENÜ ------");
-
-        while (true) {
-            System.out.println("1: Kitap Ödünç Al");
-            System.out.println("2: Ödünç Alınan Kitabı İade Et");
-            System.out.println("3: Ödünç Alınan Kitapları Görüntüle");
-            System.out.println("0: Ana menüye dön");
-            System.out.print("Seçiminiz: ");
-
-            String secim = sc.nextLine();
-
-            switch (secim) {
-                case "1":
-                    System.out.println("📚 Ödünç alınacak kitabı girin (kitapAdı yazarAdı):");
-                    String bookInput = sc.nextLine();
-                    String[] promptBook = bookInput.trim().toLowerCase().split(" ");
-
-                    if (promptBook.length < 2) {
-                        System.out.println("⚠️ Lütfen kitap ismi ve yazar ismi girin.");
-                        break;
-                    }
-
-                    Book b1 = new Book(promptBook[0], new Author(promptBook[1]), 2);
-                    reader.barrowBook(b1);
-                    break;
-
-                case "2":
-                    System.out.println("🔁 İade etmek istediğiniz kitabı girin (kitapAdı yazarAdı):");
-                    String returnInput = sc.nextLine();
-                    String[] returnBook = returnInput.trim().toLowerCase().split(" ");
-
-                    if (returnBook.length < 2) {
-                        System.out.println("⚠️ Lütfen kitap ismi ve yazar ismi girin.");
-                        break;
-                    }
-
-                    Book returnedBook = new Book(returnBook[0], new Author(returnBook[1]), 2);
-                    reader.returnBook(returnedBook);
-                    reader.showBook();
-                    break;
-
-                case "3":
-                    System.out.println("📖 Ödünç alınan kitaplar:");
-                    reader.showBook();
-                    break;
-
-                case "0":
-                    System.out.println("↩ Ana menüye dönülüyor...");
-                    return;
-
-                default:
-                    System.out.println("⚠️ Geçersiz seçim. Lütfen 1, 2, 3 veya 0 girin.");
-            }
-        }
-    }
 }
+
