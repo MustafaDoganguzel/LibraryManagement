@@ -99,7 +99,7 @@ public class Book {
     public String toString() {
         return "Book{" +
                 "bookId=" + bookId +
-                ", author=" + author +
+                ", author= " + author +
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", status=" + status +
