@@ -36,6 +36,6 @@ public class Author extends Person {
 
     @Override
     public String toString() {
-        return "Author" + getName();
+        return getName();
     }
 }
