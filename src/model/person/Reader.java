@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class Reader extends Person {
 
-    private Set<Book> books = new HashSet<>();
+    private Set<Book> readerBooks = new HashSet<>();
 
 
     public Reader(String name) {
@@ -34,55 +34,31 @@ public class Reader extends Person {
 //
 //    }
 
-    public void barrowBook(Book book){
-       try {
-           if (book == null) {
-               throw new IllegalArgumentException("The book names that you are trying to barrow cannot be blank, " +
-                       "please enter valid book name");
-           }
-           if (book.getStatus() != Status.AVAILABLE) {
-               throw new IllegalStateException("The book names that you are trying to barrow is not available");
-           }
-           if (!books.contains(book)) {
-               books.add(book);
+    public boolean borrowBook(Book book){
+
+           if (!readerBooks.contains(book)) {
+               readerBooks.add(book);
                book.setStatus(Status.BORROWED);
-               System.out.println(book.getName() + " has been added into the books list.");
-               showBook();
+               return true;
            }
-       } catch (IllegalArgumentException | IllegalStateException e) {
-           System.out.println(" !!! FAIL !!! : " + e.getMessage());
-           // TRY CATCH ile hata varsa da akis durmuyor, devam ediyor ama hata ekrana yansitiliyor!
-            }
+
+       return false;
     }
-    public void returnBook(Book book){
-        try {
-            if (book == null) {
-                throw new IllegalArgumentException("The book name that you are trying to return cannot be blank. Please enter a valid book name.");
-            }
+    public boolean returnBook(Book book){
 
-            if (book.getStatus() != Status.BORROWED) {
-                throw new IllegalStateException("The book that you are trying to return is not borrowed. Please check your list again.");
-            }
-
-            if (books.contains(book)) {
-                books.remove(book);
+            if (readerBooks.contains(book)) {
+                readerBooks.remove(book);
                 book.setStatus(Status.AVAILABLE);
                 System.out.println(book.getName() + " | has been removed from your books list!");
                 showBook();
-            } else {
-                throw new IllegalArgumentException("The book that you are trying to return is not in your books list.");
+                return true;
             }
-
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            System.out.println(" !!! FAIL !!! : " + e.getMessage());
-            // TRY CATCH ile hata varsa da akis durmuyor, devam ediyor ama hata ekrana yansitiliyor!
-        }
-
+        return false;
     }
 
     public void showBook(){
         System.out.println("The books that you have as follows; ");
-        for(Book book : books){
+        for(Book book : readerBooks){
             book.display();
         }
     }
