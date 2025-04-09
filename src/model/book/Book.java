@@ -12,16 +12,16 @@ public class Book {
     private int bookId;
     private Author author;
     private String name;
-    private int price;
+    private double price;
     private Status status;
     private Person owner;
     private LocalDate dateOfPurchase;
 
-    public Book( String name, Author author,  int price){
+    public Book( String name, Author author){
         this.bookId = bookIdCounter++;
         this.name = name;
         this.author = author;
-        this.price = price;
+        this.price = Math.random()*900 + 1;
         this.status = Status.AVAILABLE;
         this.dateOfPurchase = LocalDate.now();
     }
@@ -60,7 +60,7 @@ public class Book {
         return name;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -103,8 +103,6 @@ public class Book {
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", status=" + status +
-                ", owner=" + owner +
-                ", dateOfPurchase=" + dateOfPurchase +
                 '}';
     }
 }
