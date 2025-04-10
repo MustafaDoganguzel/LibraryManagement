@@ -10,7 +10,7 @@ import model.person.Reader;
 
 import java.util.*;
 
-public class Library {
+public class Library { ///
     private static Library instance;
     private Set<Book> books = new HashSet<>();
     private List<Reader> readers;
@@ -36,7 +36,7 @@ public class Library {
             new Journals("Sanat ve Kültür", new Author("Emine Çelik"))
     };
 
-    public Library() {
+    private  Library() { // *******
         this.books = new HashSet<>();
         this.readers = new ArrayList<>();
 
@@ -62,7 +62,7 @@ public class Library {
 
     public void newBook(Book book){
         books.add(book);
-        List<Book> initialBookList = new ArrayList<>(Arrays.asList(initialBooks));
+        List<Book> initialBookList = new ArrayList<>(Arrays.asList(initialBooks)); // *****
         initialBookList.add(book);
         System.out.println("Eklenen kitap : " + book.getName() + " Kitabin yazari: " + book.getAuthor());
 
