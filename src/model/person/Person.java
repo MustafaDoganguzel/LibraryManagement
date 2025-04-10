@@ -11,7 +11,5 @@ public abstract class Person {
         return name;
     }
 
-    public void whoYouAre(){
-        System.out.println("Person "+ getName());
-    }
+    public abstract void whoYouAre(); // ****
 }
